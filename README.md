@@ -48,7 +48,7 @@ A full-stack, AI-powered notes application where users can create, organize, and
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/smart-notes-ai.git
+git clone https://github.com/KartikLakra1/smart-notes-ai.git
 cd smart-notes-ai
 
 # Install frontend dependencies

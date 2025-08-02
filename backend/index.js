@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use(ClerkExpressWithAuth());
 
-app.use("/api/notes", noteRoutes);
+app.use("/notes", noteRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URI)

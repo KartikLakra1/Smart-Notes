@@ -1,29 +1,42 @@
-const express = require('express');
-const { OpenAI } = require('openai');
+import express from 'express';
+import openai from '../utils/openai.js';
+import Note from '../models/Note.js';
+import { requireAuth } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-router.post('/ask', async (req, res) => {
-  const { prompt } = req.body;
-
-  if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
-
+// POST /api/ai/query
+router.post('/query', requireAuth, async (req, res) => {
+  
   try {
+    const { question } = req.body;
+    const userId = req.userId;
+
+    const notes = await Note.find({ userId });
+
+    const notesText = notes
+      .map((n, i) => `${i + 1}. ${n.title}:\n${n.content}`)
+      .join('\n\n');
+
+    const prompt = `
+You are a helpful assistant. Based on the following notes:
+
+${notesText}
+
+Answer this question: "${question}" in just few words
+`;
+
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        { role: 'system', content: 'You are a helpful AI assistant for summarizing and understanding notes.' },
-        { role: 'user', content: prompt },
-      ],
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 500,
     });
 
-    const message = completion.choices[0]?.message?.content;
-    res.json({ answer: message });
+    res.json({ answer: completion.choices[0].message.content.trim() });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to get response from OpenAI' });
+    res.status(500).json({ error: 'AI assistant failed to respond' });
   }
 });
 
-module.exports = router;
+export default router;

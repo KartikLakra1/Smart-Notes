@@ -1,5 +1,5 @@
 "use client";
-
+import Assistant from "@/components/Assistant";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { useAuth } from "@clerk/nextjs";
@@ -147,6 +147,10 @@ export default function DashboardPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Assistant />
     </div>
+    
   );
 }
+
+

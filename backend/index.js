@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import noteRoutes from "./routes/noteRoutes.js";
 import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
+import aiRoutes from './routes/ai.js';
 
 dotenv.config();
 const app = express();
@@ -11,8 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(ClerkExpressWithAuth());
-
+// console.log("api key : ", process.env.OPENAI_API_KEY);
 app.use("/notes", noteRoutes);
+app.use('/api/ai', aiRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URI)
